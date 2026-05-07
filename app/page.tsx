@@ -1,14 +1,9 @@
 import Link from "next/link";
 import DancingAvatar from "@/components/DancingAvatar";
-import { getAllProfessors, getProfessorStats } from "@/lib/db";
-import { seed } from "@/lib/seed";
-
-export const dynamic = "force-dynamic";
+import { getAllProfessors, getProfessorStats } from "@/lib/data";
 
 export default function Home() {
-  seed();
-  const professors = getAllProfessors();
-  const enriched = professors.map((p) => ({ ...p, stats: getProfessorStats(p.id) }));
+  const enriched = getAllProfessors().map((p) => ({ ...p, stats: getProfessorStats(p.id) }));
 
   return (
     <main>

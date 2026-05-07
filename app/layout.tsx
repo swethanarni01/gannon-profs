@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -13,7 +14,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <div className="max-w-6xl mx-auto px-4 py-6">
           <header className="flex items-center justify-between mb-8 border-b border-slate-200 pb-5">
-            <a href="/" className="flex items-center gap-3 group">
+            <Link href="/" className="flex items-center gap-3 group">
               <span className="text-3xl">🎓</span>
               <div>
                 <h1 className="text-2xl font-black tracking-tight text-slate-900">
@@ -23,10 +24,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   Department of Computer &amp; Information Science · unofficial · for current and prospective students
                 </p>
               </div>
-            </a>
-            <a href="/" className="text-sm font-semibold text-slate-700 hover:text-slate-900">
+            </Link>
+            <Link href="/" className="text-sm font-semibold text-slate-700 hover:text-slate-900">
               Faculty Directory →
-            </a>
+            </Link>
           </header>
           {children}
           <footer className="mt-16 text-center text-xs text-slate-500 leading-relaxed">

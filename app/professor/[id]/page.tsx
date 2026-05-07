@@ -1,23 +1,33 @@
 import { notFound } from "next/navigation";
 import DancingAvatar from "@/components/DancingAvatar";
-import CommentForm from "@/components/CommentForm";
-import { getProfessor, getCommentsForProfessor, getProfessorStats } from "@/lib/db";
-import { seed } from "@/lib/seed";
+import Giscus from "@/components/Giscus";
+import {
+  getAllProfessors,
+  getCommentsForProfessor,
+  getProfessor,
+  getProfessorStats,
+} from "@/lib/data";
 
-export const dynamic = "force-dynamic";
+export function generateStaticParams() {
+  return getAllProfessors().map((p) => ({ id: p.id }));
+}
 
 export default function ProfessorPage({ params }: { params: { id: string } }) {
-  seed();
   const prof = getProfessor(params.id);
   if (!prof) notFound();
-  const comments = getCommentsForProfessor(prof.id);
+  const seedComments = getCommentsForProfessor(prof.id);
   const stats = getProfessorStats(prof.id);
 
   return (
     <main className="space-y-8">
       <section className="bubble-card rounded-3xl p-8 grid md:grid-cols-[200px_1fr] gap-8 items-center">
         <div className="flex justify-center">
-          <DancingAvatar style={prof.avatar_style} color={prof.avatar_color} dance={prof.dance_style} size={180} />
+          <DancingAvatar
+            style={prof.avatar_style}
+            color={prof.avatar_color}
+            dance={prof.dance_style}
+            size={180}
+          />
         </div>
         <div>
           <h2 className="text-3xl font-bold text-slate-900">{prof.name}</h2>
@@ -38,7 +48,7 @@ export default function ProfessorPage({ params }: { params: { id: string } }) {
               </p>
             </div>
             <div>
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Reviews</p>
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Seed Reviews</p>
               <p className="text-xl font-bold text-slate-900">{stats.count}</p>
             </div>
           </div>
@@ -72,12 +82,10 @@ export default function ProfessorPage({ params }: { params: { id: string } }) {
         </div>
       </section>
 
-      <section className="space-y-4">
-        <h3 className="text-xl font-bold text-slate-900">Student Reviews</h3>
-        {comments.length === 0 ? (
-          <p className="text-slate-500 italic">No reviews yet. Be the first to contribute.</p>
-        ) : (
-          comments.map((c) => (
+      {seedComments.length > 0 && (
+        <section className="space-y-4">
+          <h3 className="text-xl font-bold text-slate-900">Sample Reviews</h3>
+          {seedComments.map((c) => (
             <article key={c.id} className="bubble-card rounded-2xl p-5">
               <div className="flex items-center justify-between flex-wrap gap-2">
                 <div>
@@ -91,15 +99,12 @@ export default function ProfessorPage({ params }: { params: { id: string } }) {
                 </div>
               </div>
               <p className="mt-2 text-slate-700">{c.body}</p>
-              <p className="mt-2 text-xs text-slate-400">
-                {new Date(c.created_at + "Z").toLocaleString()}
-              </p>
             </article>
-          ))
-        )}
-      </section>
+          ))}
+        </section>
+      )}
 
-      <CommentForm professorId={prof.id} classes={prof.classes} />
+      <Giscus term={`prof:${prof.id}`} />
     </main>
   );
 }
